@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c2b1371cb657c47b7c5336d2d128f1, type: 3}
+  m_Name: Lava bullet
+  m_EditorClassIdentifier: 
+  poolTag: Lava
+  speed: 30
+  damage: 1
+  lifetime: 2
+  elementType: 1
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 320
+  destroyOnHit: 1
+  shootSound: {fileID: 8300000, guid: e8b294ffb819ce74696c45c02d3f1af3, type: 3}
+  hitSound: {fileID: 8300000, guid: 70a2349762c23874580c1bbcae031187, type: 3}

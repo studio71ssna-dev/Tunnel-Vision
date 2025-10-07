@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &247590840382597723
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5356457644142979516}
+  - component: {fileID: 177051531618621065}
+  m_Layer: 0
+  m_Name: _bulletPooler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5356457644142979516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247590840382597723}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 119.44467, y: 0, z: 803.7296}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &177051531618621065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247590840382597723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdb0d5de28ec4f4c90bd48256ed5a1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pools:
+  - tag: Lava
+    prefab: {fileID: 8571002968502588638, guid: 24ec401188c20384a9f201c047b1d639, type: 3}
+    size: 10
+  - tag: Water
+    prefab: {fileID: 3793225995210965804, guid: 71a39c9f69e65d14aa6b3f1cd9f1caae, type: 3}
+    size: 10
+  - tag: Holy
+    prefab: {fileID: 5311581168568877533, guid: 11d7c8cc79e06724d8dc8f1a8edf6fed, type: 3}
+    size: 10
+  - tag: Poison
+    prefab: {fileID: 3088059313152329409, guid: 002171015bc6aae44abd38a03ac4e2c3, type: 3}
+    size: 10

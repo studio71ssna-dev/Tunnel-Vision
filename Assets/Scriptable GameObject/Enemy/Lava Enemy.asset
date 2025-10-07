@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5a72ce23bdf34c9ca21593ccf23ea, type: 3}
+  m_Name: Lava Enemy
+  m_EditorClassIdentifier: 
+  enemyName: Lava Enemy
+  maxHealth: 100
+  moveSpeed: 20
+  visualPrefab: {fileID: 4720111335734023878, guid: 6d250e8d84dd8e44480b80a67480158f, type: 3}
+  selfElementType: 1
+  damageModifiers:
+  - elementType: 2
+    multiplier: 5
+  attackType: 1
+  detectionRange: 1000
+  contactDamage: 25
+  stoppingDistance: 20
+  meleeDamageInterval: 5
+  projectileData: {fileID: 11400000, guid: dd4866c3a84fca2479e19229ef80450f, type: 2}
+  fireRate: 2
+  hitSound: {fileID: 8300000, guid: 70a2349762c23874580c1bbcae031187, type: 3}
+  deathSound: {fileID: 8300000, guid: e8b294ffb819ce74696c45c02d3f1af3, type: 3}
