@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20c2b1371cb657c47b7c5336d2d128f1, type: 3}
-  m_Name: Poison bullet
+  m_Name: Fire bullet
   m_EditorClassIdentifier: 
-  poolTag: Poison
-  elementColor: {r: 0.58747244, g: 0.064257726, b: 0.7169812, a: 1}
+  poolTag: Fire
+  elementColor: {r: 16384, g: 0, b: 0, a: 1}
   speed: 30
   damage: 1
   lifetime: 2
   fireRate: 0.15
   magazineSize: 30
   reloadTime: 1.5
-  elementType: 4
+  elementType: 0
   hitLayers:
     serializedVersion: 2
     m_Bits: 320
