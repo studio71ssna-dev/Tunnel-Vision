@@ -55,5 +55,5 @@ MonoBehaviour:
     prefab: {fileID: 6304933688946308438, guid: 05065fc1d1dd5644fa11b348ce23a1b6, type: 3}
     size: 10
   - tag: Holy
-    prefab: {fileID: 2710079007452294776, guid: 263fd18210dae1c40bee3c98701b9825, type: 3}
+    prefab: {fileID: 5894007510898371250, guid: a4015398a03246449ab35b6f50a313ed, type: 3}
     size: 10
