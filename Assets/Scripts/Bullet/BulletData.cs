@@ -4,7 +4,7 @@ using UnityEngine;
 public class BulletData : ScriptableObject
 {
     [Header("Pooling")]
-    public string poolTag; // Make sure this matches BulletPooler config!
+    public string poolTag; 
 
     [Header("Visuals")]
     [ColorUsage(true, true)] // Allows HDR intensity selection

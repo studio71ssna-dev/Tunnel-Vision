@@ -1,0 +1,11 @@
+{
+    "asset": "8d2cc161871e70f4e9f9d2ab27260682",
+    "fileName": "019aa8aa-ed95-766d-9ea2-b14794bb7e0b_Preview.png",
+    "prompt": "mud and grass",
+    "negativePrompt": "",
+    "model": "44ec3749-963a-44b1-aa54-dc19f6ed8ab2",
+    "modelName": "Unity Texture2D",
+    "customSeed": 633208205,
+    "w3CTraceId": "34477e26f0deeac9906e8cdcb173253b",
+    "refinementMode": "Generation"
+}

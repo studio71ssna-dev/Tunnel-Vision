@@ -23,7 +23,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Glowing red
-    second: {fileID: 2100000, guid: 83a9608b8a502b4428ad525e66649649, type: 2}
+    second: {fileID: 2100000, guid: 9b4512cf6d7c02342b6882cb13bb7bed, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
