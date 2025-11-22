@@ -28,14 +28,20 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // 1. Layer Check (Existing logic)
         if (_data == null || ((1 << other.gameObject.layer) & _data.hitLayers) == 0) return;
 
-        // Spawn Impact Particle from ObjectPooler (Visuals)
-        // assuming you have a particle mapped to "ImpactVFX" or similar in your pool
-        // ObjectPooler.Instance.SpawnFromPool("ImpactVFX", transform.position, Quaternion.identity);
+        // 2. APPLY DAMAGE (This was missing)
+        // We look for the IDamageable interface on the object we hit
+        if (other.TryGetComponent<IDamageable>(out IDamageable target))
+        {
+            target.TakeDamage(_data.damage, _data.elementType);
+        }
 
+        // 3. Visuals & Audio (Existing logic)
         if (_data.hitSound != null) AudioSource.PlayClipAtPoint(_data.hitSound, transform.position);
 
+        // 4. Destroy (Existing logic)
         if (_data.destroyOnHit) ReturnToPool();
     }
 

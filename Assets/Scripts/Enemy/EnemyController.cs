@@ -8,7 +8,7 @@ using System.Threading;
 public class EnemyController : MonoBehaviour
 {
     [Header("Data Config")]
-    [SerializeField] private EnemyType _enemyType; // Drag 'PoisonData' here
+    [SerializeField] private EnemyType _enemyType;
     [SerializeField] private float _maxHealth = 100f;
     [SerializeField] private string _lootTag = "LootOrb";
 
@@ -17,16 +17,20 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 5f;
 
     [Header("Laser Attack")]
-    [SerializeField] private Transform _firePoint; // Center of the symbol
+    [SerializeField] private Transform _firePoint;
     [SerializeField] private int _attackIntervalMS = 2000; // 2 seconds
     [SerializeField] private int _laserDurationMS = 200;   // 0.2 seconds
-    [SerializeField] private int _damageToPlayer = 10;
+    [SerializeField] private float _damageToPlayer = 10f;
+    [SerializeField] private float _attackRange = 50f;
+
+    [Header("UI")]
+    [SerializeField] private EnemyHealthUI _healthUI; // Drag your new UI script here
 
     private NavMeshAgent _agent;
     private LineRenderer _lineRenderer;
     private Transform _player;
     private float _currentHealth;
-    private CancellationTokenSource _cts; // To cancel tasks on death
+    private CancellationTokenSource _cts;
     private bool _isAttacking = false;
 
     private void Awake()
@@ -34,24 +38,38 @@ public class EnemyController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _lineRenderer = GetComponent<LineRenderer>();
         _player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // Ensure visuals are off at start
         _lineRenderer.enabled = false;
+        _lineRenderer.useWorldSpace = true; // Important for laser accuracy
     }
 
     private void OnEnable()
     {
         _currentHealth = _maxHealth;
         _agent.isStopped = false;
+        _isAttacking = false;
+        _lineRenderer.enabled = false;
 
-        // Start the Logic Loop
+        // Initialize Health UI
+        if (_healthUI != null)
+        {
+            // If your EnemyType has a color, use it. Otherwise default to red.
+            // Assuming you might add color to EnemyType later, using generic Color.red for now.
+            _healthUI.Initialize(_maxHealth, Color.red);
+        }
+
+        // Reset and Start Async Logic
         if (_cts != null) _cts.Dispose();
         _cts = new CancellationTokenSource();
 
         LifeCycleRoutine(_cts.Token).Forget();
     }
 
-    // The Main AI Loop (replaces Update)
+    // The Main AI Loop
     private async UniTaskVoid LifeCycleRoutine(CancellationToken token)
     {
+        // Loop while alive and not cancelled
         while (!token.IsCancellationRequested && _currentHealth > 0)
         {
             if (_player == null) break;
@@ -60,25 +78,27 @@ public class EnemyController : MonoBehaviour
 
             if (dist > _stopDistance && !_isAttacking)
             {
-                // Move
+                // Chase State
                 _agent.isStopped = false;
                 _agent.SetDestination(_player.position);
             }
             else
             {
-                // Stop and Attack
+                // Attack State
                 _agent.isStopped = true;
                 RotateTowardsPlayer();
 
                 if (!_isAttacking)
                 {
+                    // Fire attack and wait
                     await FireRayAttack(token);
-                    // Wait interval before next check
+
+                    // Cooldown between shots
                     await UniTask.Delay(_attackIntervalMS, cancellationToken: token);
                 }
             }
 
-            // Yield to next frame to prevent freezing
+            // Wait for next frame
             await UniTask.Yield(PlayerLoopTiming.Update, token);
         }
     }
@@ -86,8 +106,10 @@ public class EnemyController : MonoBehaviour
     private void RotateTowardsPlayer()
     {
         if (_player == null) return;
+
         Vector3 dir = (_player.position - transform.position).normalized;
         dir.y = 0; // Keep upright
+
         if (dir != Vector3.zero)
         {
             Quaternion lookRot = Quaternion.LookRotation(dir);
@@ -95,47 +117,65 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // REPLACES COROUTINE
     private async UniTask FireRayAttack(CancellationToken token)
     {
         _isAttacking = true;
 
-        // 1. Visuals On
-        _lineRenderer.SetPosition(0, _firePoint.position);
-        _lineRenderer.SetPosition(1, _player.position); // Simplification: Aim perfectly at player center
-        _lineRenderer.enabled = true;
+        // 1. Calculate Hit Logic First
+        Vector3 startPos = _firePoint.position;
+        Vector3 direction = (_player.position - startPos).normalized;
+        Vector3 endPos;
 
-        // 2. Apply Damage (Hitscan logic)
-        // Simple distance check or Raycast
-        if (Physics.Raycast(_firePoint.position, (_player.position - _firePoint.position).normalized, out RaycastHit hit, 100f))
+        // Physics Raycast to determine what we actually hit (Wall or Player)
+        if (Physics.Raycast(startPos, direction, out RaycastHit hit, _attackRange))
         {
+            endPos = hit.point; // Laser stops at impact point
+
             if (hit.collider.CompareTag("Player"))
             {
-                _player.GetComponent<PlayerHealth>()?.TakeDamage(_damageToPlayer);
+                // TODO: Integrate Player Health Singleton here
+                // PlayerHealth.Instance.TakeDamage(_damageToPlayer);
+                Debug.Log($"Enemy hit Player for {_damageToPlayer} damage!");
             }
         }
+        else
+        {
+            // Hit nothing? Shoot into the distance
+            endPos = startPos + (direction * _attackRange);
+        }
 
-        // 3. Wait for duration
+        // 2. Enable Visuals
+        _lineRenderer.SetPosition(0, startPos);
+        _lineRenderer.SetPosition(1, endPos);
+        _lineRenderer.enabled = true;
+
+        // 3. Wait for laser duration
         await UniTask.Delay(_laserDurationMS, cancellationToken: token);
 
-        // 4. Visuals Off
+        // Safety check: If enemy died during the wait, stop here
+        if (token.IsCancellationRequested) return;
+
+        // 4. Disable Visuals
         _lineRenderer.enabled = false;
         _isAttacking = false;
     }
 
-    // LOGIC: Called by WeakPoint
+    // Called by WeakPoint / IDamageable
     public void TakeDamage(float baseDamage, ElementType incomingType)
     {
         if (_currentHealth <= 0) return;
 
-        // Calculate using SO
+        // Calculate damage multiplier from ScriptableObject
         float multiplier = _enemyType.GetDamageMultiplier(incomingType);
         float finalDamage = baseDamage * multiplier;
 
         _currentHealth -= finalDamage;
 
-        // Feedback (Optional)
-        // PopupTextPooler.Spawn(finalDamage, transform.position, Color.white);
+        // Update UI
+        if (_healthUI != null)
+        {
+            _healthUI.UpdateHealth(_currentHealth);
+        }
 
         if (_currentHealth <= 0)
         {
@@ -145,16 +185,26 @@ public class EnemyController : MonoBehaviour
 
     private void Die()
     {
-        _cts.Cancel(); // Stop AI loop immediately
+        _cts.Cancel(); // Stop AI immediately
 
-        ObjectPooler.Instance.SpawnFromPool(_lootTag, transform.position, Quaternion.identity);
-        ObjectPooler.Instance.ReturnToPool(GetPoolTag(), gameObject);
+        // Ensure visuals are off before pooling
+        _lineRenderer.enabled = false;
+
+        // Spawn Loot
+        if (ObjectPooler.Instance != null)
+        {
+            ObjectPooler.Instance.SpawnFromPool(_lootTag, transform.position, Quaternion.identity);
+            ObjectPooler.Instance.ReturnToPool(GetPoolTag(), gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private string GetPoolTag()
     {
-        // Helper to return correct tag based on type
-        // Ensure these match your ObjectPooler tags
+        // Dynamic tag generation to match your ObjectPooler keys
         return "Enemy" + _enemyType.myType.ToString();
     }
 
