@@ -1,77 +1,49 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement; // Required for reloading the scene
 
-/// <summary>
-/// Manages the player's health, including taking damage and handling death.
-/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Health Settings")]
-    [Tooltip("The maximum health of the player.")]
-    [SerializeField] private float maxHealth = 100f;
+    [Header("Health")]
+    public int maxHealth = 100;
 
-    // The player's current health.
-    private float currentHealth;
+    // Current health (runtime)
+    private int _currentHealth;
 
-    [Header("Events")]
-    [Tooltip("Event fired when health changes. Sends current health as a percentage (0-1).")]
-    public UnityEvent<float> OnHealthChanged;
-    [Tooltip("Event fired when the player's health reaches zero.")]
-    public UnityEvent OnPlayerDied;
+    // Events
+    // Invoked when the player takes damage: (currentHealth, maxHealth)
+    public UnityEvent<int, int> OnTakeDmg;
+    // Optional death event to hook UI/game over behavior
+    public UnityEvent OnDeath;
 
-    private void Start()
+    private void Awake()
     {
-        // Initialize health at the start of the game.
-        currentHealth = maxHealth;
+        _currentHealth = maxHealth;
     }
 
-    /// <summary>
-    /// Reduces the player's health by a specified amount.
-    /// </summary>
-    /// <param name="damageAmount">The amount of damage to take.</param>
-    public void TakeDamage(float damageAmount)
+    // Public accessor
+    public int CurrentHealth => _currentHealth;
+    public int MaxHealth => maxHealth;
+
+    // Lowers current health by amount, invokes OnTakeDmg, and handles death when health reaches0
+    public void TakeDamage(int amount)
     {
-        // Ignore damage if already dead.
-        if (currentHealth <= 0) return;
+        if (amount <= 0) return;
 
-        currentHealth -= damageAmount;
+        _currentHealth -= amount;
+        if (_currentHealth < 0) _currentHealth = 0;
 
-        // Ensure health doesn't go below zero.
-        if (currentHealth < 0)
-        {
-            currentHealth = 0;
-        }
+        OnTakeDmg?.Invoke(_currentHealth, maxHealth);
 
-        // Fire the health changed event for UI elements like health bars.
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
-        Debug.Log($"Player took {damageAmount} damage. Health is now {currentHealth}/{maxHealth}");
-
-        // Check for death.
-        if (currentHealth <= 0)
+        if (_currentHealth == 0)
         {
             Die();
         }
     }
 
-    /// <summary>
-    /// Handles the player's death.
-    /// </summary>
     private void Die()
     {
-        Debug.Log("Player has been defeated!");
-        OnPlayerDied?.Invoke();
-
-        // As a simple death mechanic, we'll reload the level after a short delay.
-        // In a full game, you might show a "Game Over" screen here.
-        Invoke(nameof(ReloadScene), 2f);
-    }
-
-    /// <summary>
-    /// Reloads the currently active scene.
-    /// </summary>
-    private void ReloadScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        OnDeath?.Invoke();
+        // Default behavior: disable the player GameObject. Override by subscribing to OnDeath in inspector.
+        gameObject.SetActive(false);
     }
 }

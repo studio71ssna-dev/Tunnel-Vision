@@ -1,65 +1,95 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using SingletonManager;
+using System;
 
-public class InputManager : MonoBehaviour
+namespace Singletons
 {
-    [Header("Movement Signals")]
-    // We pass the Vector2 directly to the TurretController
-    public UnityEvent<Vector2> OnLookOutput;
-
-    [Header("Combat Signals")]
-    public UnityEvent OnFireOutput;
-    public UnityEvent OnReloadOutput;
-
-    // We pass the scroll value (Y-axis) to cycle weapons
-    // Positive value = Next Weapon, Negative = Previous Weapon
-    public UnityEvent<float> OnWeaponScrollOutput;
-
-    // ---------------------------------------------------------
-    // DRAG THESE METHODS INTO THE 'PLAYER INPUT' COMPONENT EVENTS
-    // ---------------------------------------------------------
-
-    public void OnLook(InputAction.CallbackContext context)
+    public class InputManager : SingletonPersistent
     {
-        // Only process if the value actually changed
-        if (context.performed || context.canceled)
+        public static InputManager Instance => GetInstance<InputManager>();
+
+        #region Properties of InputSystem Class
+        public delegate void OnActionEvent();
+        private InputAction MoveInput;
+        private InputAction LookInput;
+        #endregion
+
+        #region General Methods
+        public Vector2 MoveDirection { get; private set; }
+        public float HorizontalLook { get; private set; }
+        #endregion
+
+        #region Event Properties
+
+        public event Action<bool> OnShoot;
+        public event OnActionEvent OnReload;
+        public event OnActionEvent OnSwap;
+
+        #endregion
+
+        #region General Methods
+        private void Start()
         {
-            Vector2 value = context.ReadValue<Vector2>();
-            OnLookOutput.Invoke(value);
+            var playerInput = GetComponent<PlayerInput>();
+
+            MoveInput = playerInput.actions.FindAction("Move");
+            LookInput = playerInput.actions.FindAction("Look");
+
+            if (MoveInput == null || LookInput == null)
+                print("Input System actions missing on InputManager!");
+
+            // Lock and hide cursor
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
-    }
 
-    public void OnFire(InputAction.CallbackContext context)
-    {
-        if (context.performed)
+        private void Update()
         {
-            OnFireOutput.Invoke();
+            MoveAction();
+            LookAction();
         }
-    }
+        #endregion
 
-    public void OnReload(InputAction.CallbackContext context)
-    {
-        if (context.performed)
+        #region Event Methods
+        private void MoveAction()
         {
-            OnReloadOutput.Invoke();
+            MoveDirection = MoveInput.ReadValue<Vector2>();
         }
-    }
 
-    public void OnScroll(InputAction.CallbackContext context)
-    {
-        // 'performed' is triggered when the scroll wheel is moved
-        if (context.performed)
+        private void LookAction()
         {
-            float scrollValue = context.ReadValue<float>();
+            if (Mouse.current == null) return;
 
-            // Optimization: Normalize the value immediately so your logic 
-            // doesn't have to worry about 120 vs 1 vs 0.1
-            // Returns 1, -1, or 0
-            if (scrollValue != 0)
+            Vector2 delta = LookInput.ReadValue<Vector2>();
+            HorizontalLook = delta.x;   // ONLY horizontal rotation
+        }
+
+        public void ShootAction(InputAction.CallbackContext context)
+        {
+            // Invoke with true when button is pressed/held, false when released
+            if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Performed)
             {
-                OnWeaponScrollOutput.Invoke(Mathf.Sign(scrollValue));
+                OnShoot?.Invoke(true);
+            }
+            else if (context.phase == InputActionPhase.Canceled)
+            {
+                OnShoot?.Invoke(false);
             }
         }
+
+        public void ReloadAction(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                OnReload?.Invoke();
+        }
+
+        public void SwapAction(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                OnSwap?.Invoke();
+        }
+        #endregion
     }
 }

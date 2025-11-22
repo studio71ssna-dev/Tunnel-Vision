@@ -20,7 +20,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private Transform _firePoint; // Center of the symbol
     [SerializeField] private int _attackIntervalMS = 2000; // 2 seconds
     [SerializeField] private int _laserDurationMS = 200;   // 0.2 seconds
-    [SerializeField] private float _damageToPlayer = 10f;
+    [SerializeField] private int _damageToPlayer = 10;
 
     private NavMeshAgent _agent;
     private LineRenderer _lineRenderer;
@@ -111,9 +111,7 @@ public class EnemyController : MonoBehaviour
         {
             if (hit.collider.CompareTag("Player"))
             {
-                // Assuming you have a singleton or event for player health
-                // PlayerHealth.Instance.TakeDamage(_damageToPlayer);
-                Debug.Log($"Zapped Player with {_enemyType.myType} beam!");
+                _player.GetComponent<PlayerHealth>()?.TakeDamage(_damageToPlayer);
             }
         }
 

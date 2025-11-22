@@ -20,7 +20,7 @@ MonoBehaviour:
   fireRate: 0.15
   magazineSize: 30
   reloadTime: 1.5
-  elementType: 4
+  elementType: 2
   hitLayers:
     serializedVersion: 2
     m_Bits: 320
