@@ -40,7 +40,7 @@ public class WeaponController : MonoBehaviour
 
     private void Start()
     {
-        // Initialize Ammo for the first gun
+        // Initialize Ammo for the first gun (shared magazine across weapons)
         if (CurrentWeapon != null)
         {
             _currentAmmo = CurrentWeapon.magazineSize;
@@ -87,9 +87,7 @@ public class WeaponController : MonoBehaviour
         // Loop Logic
         if (_currentIndex >= _weapons.Length) _currentIndex = 0;
 
-        // Reset ammo for new weapon
-        _currentAmmo = CurrentWeapon != null ? CurrentWeapon.magazineSize : 0;
-
+        // Do NOT change shared ammo when swapping weapons. Just update visuals and notify UI of new max.
         UpdateVisuals();
         OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon != null ? CurrentWeapon.magazineSize : 0);
         OnWeaponSwapped?.Invoke();
@@ -162,6 +160,7 @@ public class WeaponController : MonoBehaviour
                 // Fire one bullet
                 _nextFireTime = Time.time + CurrentWeapon.fireRate;
                 _currentAmmo--;
+
                 OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
 
                 if (ObjectPooler.Instance == null)
