@@ -1,5 +1,7 @@
 fileFormatVersion: 2
-guid: e8b294ffb819ce74696c45c02d3f1af3
+guid: 8ee0ee10eac1cda46bc49e5174a221e9
+labels:
+- UnityAI
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8

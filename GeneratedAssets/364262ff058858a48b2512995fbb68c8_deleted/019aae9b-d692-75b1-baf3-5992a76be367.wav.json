@@ -1,0 +1,13 @@
+{
+    "asset": "364262ff058858a48b2512995fbb68c8",
+    "fileName": "019aae9b-d692-75b1-baf3-5992a76be367.wav",
+    "prompt": "horror survival background",
+    "negativePrompt": "",
+    "model": "ee31b223-3fe1-4ae6-bf54-d8a80bb4b0e1",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "db3500756aabde0a0cccdcf9c58cb84e",
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false
+}

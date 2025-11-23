@@ -28,6 +28,5 @@ public class BulletData : ScriptableObject
     public bool destroyOnHit = true;
 
     [Header("Audio")]
-    public AudioClip shootSound;
     public AudioClip hitSound;
 }

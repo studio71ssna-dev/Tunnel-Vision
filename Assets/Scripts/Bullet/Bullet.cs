@@ -24,19 +24,6 @@ public class Bullet : MonoBehaviour
         // Unity 6 / 2023+ syntax. Use 'velocity' for older versions.
         if (_rb != null) _rb.linearVelocity = transform.forward * _data.speed;
 
-        // 2. Trail Setup (Visuals)
-        if (_trail != null)
-        {
-            // Apply the color from your BulletData (e.g., Red for Fire)
-            _trail.startColor = _data.elementColor;
-            // Fade out the end of the trail
-            _trail.endColor = new Color(_data.elementColor.r, _data.elementColor.g, _data.elementColor.b, 0f);
-
-            // *** CRITICAL FIX FOR POOLING ***
-            // Clears the old path so you don't see a line stretch from the death point to spawn point
-            _trail.Clear();
-            _trail.emitting = true;
-        }
 
         if (_cts != null) _cts.Dispose();
         _cts = new CancellationTokenSource();
@@ -46,7 +33,6 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // DEBUG: Helps track what we hit
         // Debug.Log($"Bullet hit: {other.name}");
 
         if (_data == null || ((1 << other.gameObject.layer) & _data.hitLayers) == 0) return;

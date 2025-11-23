@@ -1,0 +1,13 @@
+{
+    "asset": "8ee0ee10eac1cda46bc49e5174a221e9",
+    "fileName": "019aae8e-9121-7bbb-9bfa-3d75ed0eaec1.wav",
+    "prompt": "IMPACT CRYSTAL",
+    "negativePrompt": "",
+    "model": "ee31b223-3fe1-4ae6-bf54-d8a80bb4b0e1",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "87fd8c99e985edce9dd6052818a6735b",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

@@ -1,0 +1,13 @@
+{
+    "asset": "8ee0ee10eac1cda46bc49e5174a221e9",
+    "fileName": "019aae8e-03ea-7b77-afd5-d4bca7838ca4.wav",
+    "prompt": "IMPACT GLASS",
+    "negativePrompt": "",
+    "model": "ee31b223-3fe1-4ae6-bf54-d8a80bb4b0e1",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "a8a08a1f64a83a2647421014ca26b368",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

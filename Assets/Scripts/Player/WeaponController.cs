@@ -35,6 +35,9 @@ public class WeaponController : MonoBehaviour
     #region General Methods
     private void Awake()
     {
+        // Force lock cursor whenever this level loads
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         _propBlock = new MaterialPropertyBlock();
     }
 
