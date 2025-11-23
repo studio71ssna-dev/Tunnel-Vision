@@ -16,7 +16,7 @@ MonoBehaviour:
   elementColor: {r: 16384, g: 0, b: 0, a: 1}
   speed: 30
   damage: 1
-  lifetime: 2
+  lifetime: 1.5
   fireRate: 0.15
   magazineSize: 30
   reloadTime: 1.5

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolTag: Water
   elementColor: {r: 0.060593024, g: 0.7317209, b: 1.8351021, a: 1}
-  speed: 10
-  damage: 25
-  lifetime: 20
+  speed: 30
+  damage: 1
+  lifetime: 1.5
   fireRate: 0.15
   magazineSize: 30
   reloadTime: 1.5
