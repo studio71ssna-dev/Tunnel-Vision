@@ -194,13 +194,29 @@ public class EnemyController : MonoBehaviour
     {
         _cts.Cancel(); // Stop AI immediately
 
-        // Ensure visuals are off before pooling
+        // Ensure visuals are off
         _lineRenderer.enabled = false;
+
+        Vector3 spawnPos = transform.position;
+
+        // Cast a ray from the enemy's center DOWN to find the floor
+        // We start 1 unit up to ensure we don't start inside the floor
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 10f))
+        {
+            // Found the floor! Spawn loot 0.5 units above it so it doesn't clip
+            spawnPos = hit.point + (Vector3.up * 0.5f);
+        }
+        else
+        {
+            // Fallback: If we are over a hole, just drop it to y = 0.5
+            spawnPos.y = 0.5f;
+        }
 
         // Spawn Loot
         if (ObjectPooler.Instance != null)
         {
-            ObjectPooler.Instance.SpawnFromPool(_lootTag, transform.position, Quaternion.identity);
+            // Use the new 'spawnPos' instead of 'transform.position'
+            ObjectPooler.Instance.SpawnFromPool(_lootTag, spawnPos, Quaternion.identity);
             ObjectPooler.Instance.ReturnToPool(GetPoolTag(), gameObject);
         }
         else
