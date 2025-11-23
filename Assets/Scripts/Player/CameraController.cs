@@ -5,6 +5,12 @@ public class CameraController : MonoBehaviour
     [Header("Weapon Reference")]
     [SerializeField] private WeaponController weaponController;
 
+    [Header("Vignette Effect")]
+    [Tooltip("Drag the UI Panel/Image with the CanvasGroup component here")]
+    [SerializeField] private CanvasGroup vignetteCanvasGroup;
+    [Range(0f, 1f)]
+    [SerializeField] private float maxVignetteIntensity = 0.9f; // How dark it gets at 0 ammo
+
     [Header("FOV Settings")]
     [Tooltip("Maximum (default) FOV")]
     [SerializeField] private int maxFOV = 60;
@@ -12,11 +18,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private int minFOV = 40;
 
     [Header("Speed")]
-    [SerializeField] private float zoomSpeed = 6f; // how fast to lerp fov when zooming in (toward minFOV)
-    [SerializeField] private float zoomOutSpeed = 8f; // how fast to lerp fov when zooming out (toward maxFOV)
+    [SerializeField] private float zoomSpeed = 6f;
+    [SerializeField] private float zoomOutSpeed = 8f;
 
     private Camera _cam;
     private float _targetFOV;
+    private float _targetVignetteAlpha;
 
     private void Awake()
     {
@@ -26,8 +33,9 @@ public class CameraController : MonoBehaviour
             Debug.LogWarning("CameraController: no Camera found on this GameObject.");
         }
 
-        // Initialize target to current or configured max
+        // Initialize defaults
         _targetFOV = _cam != null ? _cam.fieldOfView : maxFOV;
+        _targetVignetteAlpha = 0f;
     }
 
     private void OnEnable()
@@ -50,38 +58,55 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        // Ensure initial FOV is the configured maxFOV
         if (_cam != null)
         {
             _cam.fieldOfView = maxFOV;
-            _targetFOV = _cam.fieldOfView;
+            _targetFOV = maxFOV;
+        }
+
+        // Ensure vignette starts invisible
+        if (vignetteCanvasGroup != null)
+        {
+            vignetteCanvasGroup.alpha = 0f;
         }
     }
 
     private void Update()
     {
-        if (_cam == null) return;
+        // 1. Handle FOV Zoom
+        if (_cam != null)
+        {
+            float fovSpeed = _targetFOV > _cam.fieldOfView ? zoomOutSpeed : zoomSpeed;
+            _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _targetFOV, Time.deltaTime * fovSpeed);
+        }
 
-        // Choose speed depending on whether we're zooming out (target > current) or zooming in
-        float speed = _targetFOV > _cam.fieldOfView ? zoomOutSpeed : zoomSpeed;
-
-        // Smoothly move FOV toward target using the chosen speed
-        _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _targetFOV, Time.deltaTime * speed);
+        // 2. Handle Vignette Fade
+        if (vignetteCanvasGroup != null)
+        {
+            // Use same speed as zoom for sync feel
+            float vignetteSpeed = _targetVignetteAlpha < vignetteCanvasGroup.alpha ? zoomOutSpeed : zoomSpeed;
+            vignetteCanvasGroup.alpha = Mathf.Lerp(vignetteCanvasGroup.alpha, _targetVignetteAlpha, Time.deltaTime * vignetteSpeed);
+        }
     }
 
-    // Called when weapon ammo changes: current and max
+    // Called when weapon ammo changes
     private void OnAmmoChanged(int current, int max)
     {
         if (max <= 0)
         {
             _targetFOV = maxFOV;
+            _targetVignetteAlpha = 0f;
             return;
         }
 
-        // Compute ratio of bullets used (0..1)
+        // Compute ratio of bullets used (0 = full ammo, 1 = empty)
         float usedRatio = (max - current) / (float)max;
-        // Map to FOV between maxFOV and minFOV
+
+        // 1. Set FOV Target
         _targetFOV = Mathf.Lerp(maxFOV, minFOV, usedRatio);
+
+        // 2. Set Vignette Target
+        _targetVignetteAlpha = Mathf.Lerp(0f, maxVignetteIntensity, usedRatio);
     }
 
     // Called when reload starts/ends
@@ -89,11 +114,14 @@ public class CameraController : MonoBehaviour
     {
         if (isReloading)
         {
-            // Do not change FOV while reload is in progress — remain at current zoom level
+            // Optional: You can choose to reset immediately here if you prefer
+            // _targetFOV = maxFOV;
+            // _targetVignetteAlpha = 0f;
             return;
         }
 
-        // When reload finishes, reset to initial FOV
+        // When reload finishes, reset everything
         _targetFOV = maxFOV;
+        _targetVignetteAlpha = 0f;
     }
 }

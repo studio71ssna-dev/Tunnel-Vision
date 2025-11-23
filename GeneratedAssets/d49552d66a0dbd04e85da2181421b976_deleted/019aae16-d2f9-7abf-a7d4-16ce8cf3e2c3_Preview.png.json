@@ -1,0 +1,11 @@
+{
+    "asset": "d49552d66a0dbd04e85da2181421b976",
+    "fileName": "019aae16-d2f9-7abf-a7d4-16ce8cf3e2c3_Preview.png",
+    "prompt": "lava , water , poison mix .would be used as loot orb",
+    "negativePrompt": "",
+    "model": "44ec3749-963a-44b1-aa54-dc19f6ed8ab2",
+    "modelName": "Unity Texture2D",
+    "customSeed": 2001289961,
+    "w3CTraceId": "4da433fdfb897f40ad6817d9cac34c79",
+    "refinementMode": "Generation"
+}

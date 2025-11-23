@@ -1,8 +1,7 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Events;
 using SingletonManager;
 using System;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Singletons
 {
@@ -19,14 +18,13 @@ namespace Singletons
         #region General Methods
         public Vector2 MoveDirection { get; private set; }
         public float HorizontalLook { get; private set; }
+        public float VerticalLook { get; private set; } // *** NEW: For looking up/down ***
         #endregion
 
         #region Event Properties
-
         public event Action<bool> OnShoot;
         public event OnActionEvent OnReload;
         public event OnActionEvent OnSwap;
-
         #endregion
 
         #region General Methods
@@ -34,11 +32,17 @@ namespace Singletons
         {
             var playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput == null)
+            {
+                Debug.LogError("InputManager: PlayerInput component missing!");
+                return;
+            }
+
             MoveInput = playerInput.actions.FindAction("Move");
             LookInput = playerInput.actions.FindAction("Look");
 
             if (MoveInput == null || LookInput == null)
-                print("Input System actions missing on InputManager!");
+                Debug.LogError("Input System actions missing on InputManager! Check Action Map names.");
 
             // Lock and hide cursor
             Cursor.lockState = CursorLockMode.Locked;
@@ -55,20 +59,21 @@ namespace Singletons
         #region Event Methods
         private void MoveAction()
         {
-            MoveDirection = MoveInput.ReadValue<Vector2>();
+            if (MoveInput != null)
+                MoveDirection = MoveInput.ReadValue<Vector2>();
         }
 
         private void LookAction()
         {
-            if (Mouse.current == null) return;
+            if (Mouse.current == null || LookInput == null) return;
 
             Vector2 delta = LookInput.ReadValue<Vector2>();
-            HorizontalLook = delta.x;   // ONLY horizontal rotation
+            HorizontalLook = delta.x;
+            VerticalLook = delta.y;     // *** NEW: Capture Y input ***
         }
 
         public void ShootAction(InputAction.CallbackContext context)
         {
-            // Invoke with true when button is pressed/held, false when released
             if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Performed)
             {
                 OnShoot?.Invoke(true);
@@ -81,14 +86,12 @@ namespace Singletons
 
         public void ReloadAction(InputAction.CallbackContext context)
         {
-            if (context.performed)
-                OnReload?.Invoke();
+            if (context.performed) OnReload?.Invoke();
         }
 
         public void SwapAction(InputAction.CallbackContext context)
         {
-            if (context.performed)
-                OnSwap?.Invoke();
+            if (context.performed) OnSwap?.Invoke();
         }
         #endregion
     }

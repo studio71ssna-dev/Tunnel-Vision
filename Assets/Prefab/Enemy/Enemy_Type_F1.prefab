@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7615642079446251449}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 7745154665965221643}
   - component: {fileID: 3867335830219904229}
   - component: {fileID: 1880660671140804109}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 2794734402654838899}
   - component: {fileID: 5387963511545840412}
   - component: {fileID: 143212350509399851}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WEAK_POINT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -246,7 +246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7337123296774577533}
   - component: {fileID: 3486696653861432879}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 9104358585141192320}
   - component: {fileID: 1678221438466579698}
   - component: {fileID: 7850981752570948426}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -454,7 +454,7 @@ GameObject:
   - component: {fileID: 5932028412008990042}
   - component: {fileID: 425147528506757493}
   - component: {fileID: 8192736154811744665}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -533,7 +533,7 @@ GameObject:
   - component: {fileID: 3744230843165471476}
   - component: {fileID: 8149881170423503926}
   - component: {fileID: 2177648174769842587}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_Type_F1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,8 +550,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3343456541021966244}
   - {fileID: 1313357491345814204}
@@ -783,8 +783,8 @@ MonoBehaviour:
   _enemyType: {fileID: 11400000, guid: 49de635678698d440a93c30ba026e44b, type: 2}
   _maxHealth: 100
   _lootTag: LootOrb
-  _stopDistance: 50
-  _rotationSpeed: 5
+  _stopDistance: 40
+  _rotationSpeed: 10
   _firePoint: {fileID: 3343456541021966244}
   _attackIntervalMS: 2000
   _laserDurationMS: 200

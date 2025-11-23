@@ -29,6 +29,7 @@ public class EnemyController : MonoBehaviour
     private NavMeshAgent _agent;
     private LineRenderer _lineRenderer;
     private Transform _player;
+    private PlayerHealth _playerHealth;
     private float _currentHealth;
     private CancellationTokenSource _cts;
     private bool _isAttacking = false;
@@ -37,11 +38,18 @@ public class EnemyController : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _lineRenderer = GetComponent<LineRenderer>();
-        _player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // FIND PLAYER AND HEALTH SCRIPT
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            _player = playerObj.transform;
+            _playerHealth = playerObj.GetComponent<PlayerHealth>(); // Cache it here
+        }
 
         // Ensure visuals are off at start
         _lineRenderer.enabled = false;
-        _lineRenderer.useWorldSpace = true; // Important for laser accuracy
+        _lineRenderer.useWorldSpace = true;
     }
 
     private void OnEnable()
@@ -121,41 +129,40 @@ public class EnemyController : MonoBehaviour
     {
         _isAttacking = true;
 
-        // 1. Calculate Hit Logic First
         Vector3 startPos = _firePoint.position;
         Vector3 direction = (_player.position - startPos).normalized;
         Vector3 endPos;
 
-        // Physics Raycast to determine what we actually hit (Wall or Player)
+        // Physics Raycast
         if (Physics.Raycast(startPos, direction, out RaycastHit hit, _attackRange))
         {
-            endPos = hit.point; // Laser stops at impact point
+            endPos = hit.point;
 
             if (hit.collider.CompareTag("Player"))
             {
-                // TODO: Integrate Player Health Singleton here
-                // PlayerHealth.Instance.TakeDamage(_damageToPlayer);
-                Debug.Log($"Enemy hit Player for {_damageToPlayer} damage!");
+                // *** THE FIX IS HERE ***
+                if (_playerHealth != null)
+                {
+                    // Cast float to int because PlayerHealth uses int
+                    _playerHealth.TakeDamage((int)_damageToPlayer);
+                }
+                Debug.Log($"Zapped Player for {_damageToPlayer} damage!");
             }
         }
         else
         {
-            // Hit nothing? Shoot into the distance
             endPos = startPos + (direction * _attackRange);
         }
 
-        // 2. Enable Visuals
+        // Visuals On
         _lineRenderer.SetPosition(0, startPos);
         _lineRenderer.SetPosition(1, endPos);
         _lineRenderer.enabled = true;
 
-        // 3. Wait for laser duration
         await UniTask.Delay(_laserDurationMS, cancellationToken: token);
-
-        // Safety check: If enemy died during the wait, stop here
         if (token.IsCancellationRequested) return;
 
-        // 4. Disable Visuals
+        // Visuals Off
         _lineRenderer.enabled = false;
         _isAttacking = false;
     }

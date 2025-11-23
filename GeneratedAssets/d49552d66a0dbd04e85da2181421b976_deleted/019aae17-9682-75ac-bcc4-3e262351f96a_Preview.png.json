@@ -1,0 +1,11 @@
+{
+    "asset": "d49552d66a0dbd04e85da2181421b976",
+    "fileName": "019aae17-9682-75ac-bcc4-3e262351f96a_Preview.png",
+    "prompt": "lava , water , purple poison mix",
+    "negativePrompt": "",
+    "model": "44ec3749-963a-44b1-aa54-dc19f6ed8ab2",
+    "modelName": "Unity Texture2D",
+    "customSeed": 1498096993,
+    "w3CTraceId": "69602e78d39c9854b3ba22d1d6bffce5",
+    "refinementMode": "Generation"
+}

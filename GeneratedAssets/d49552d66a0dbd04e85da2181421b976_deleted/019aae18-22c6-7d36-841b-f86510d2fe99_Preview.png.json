@@ -1,0 +1,11 @@
+{
+    "asset": "d49552d66a0dbd04e85da2181421b976",
+    "fileName": "019aae18-22c6-7d36-841b-f86510d2fe99_Preview.png",
+    "prompt": "red lava , blue water , purple poison mix",
+    "negativePrompt": "",
+    "model": "44ec3749-963a-44b1-aa54-dc19f6ed8ab2",
+    "modelName": "Unity Texture2D",
+    "customSeed": 1977712484,
+    "w3CTraceId": "f22283ef384ba0d46b34aba20b6cad05",
+    "refinementMode": "Generation"
+}

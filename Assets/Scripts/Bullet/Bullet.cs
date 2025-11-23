@@ -17,7 +17,6 @@ public class Bullet : MonoBehaviour
     {
         _data = bulletData;
 
-        // Unity 6 / 2023+ syntax. Use 'velocity' for older versions.
         if (_rb != null) _rb.linearVelocity = transform.forward * _data.speed;
 
         if (_cts != null) _cts.Dispose();
@@ -28,10 +27,10 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 1. Layer Check (Existing logic)
+  
         if (_data == null || ((1 << other.gameObject.layer) & _data.hitLayers) == 0) return;
 
-        // 2. APPLY DAMAGE (This was missing)
+        // 2. APPLY DAMAGE
         // We look for the IDamageable interface on the object we hit
         if (other.TryGetComponent<IDamageable>(out IDamageable target))
         {

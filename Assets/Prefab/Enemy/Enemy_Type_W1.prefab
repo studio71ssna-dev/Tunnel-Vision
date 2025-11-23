@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2871219161181780119}
   - component: {fileID: 6345881689661356013}
   - component: {fileID: 4153698035411578296}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 2568131510813172390}
   - component: {fileID: 5313650478216090423}
   - component: {fileID: 4830472571209533280}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 2122834057310240000}
   - component: {fileID: 4579507128592981539}
   - component: {fileID: 7886921144911586221}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 369027186558518977}
   - component: {fileID: 4935894384247868202}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 2045654906217756372}
   - component: {fileID: 1294094815122832449}
   - component: {fileID: 4679950228189956467}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_Type_W1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,8 +389,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6649460757304370558}
   - {fileID: 2618499001185202069}
@@ -622,8 +622,8 @@ MonoBehaviour:
   _enemyType: {fileID: 11400000, guid: a181008c48240604b8f6edb311550383, type: 2}
   _maxHealth: 100
   _lootTag: LootOrb
-  _stopDistance: 50
-  _rotationSpeed: 5
+  _stopDistance: 40
+  _rotationSpeed: 10
   _firePoint: {fileID: 6649460757304370558}
   _attackIntervalMS: 2000
   _laserDurationMS: 200
@@ -643,7 +643,7 @@ GameObject:
   - component: {fileID: 2605314974786968773}
   - component: {fileID: 7011606513021870042}
   - component: {fileID: 7081583305379345926}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WEAK_POINT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -736,7 +736,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -764,7 +764,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7576528967966298181}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
