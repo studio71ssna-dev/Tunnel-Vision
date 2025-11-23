@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2092591064877871867}
   - component: {fileID: 3655239095459397574}
   - component: {fileID: 2174977392935955765}
-  - component: {fileID: 5767334382779361313}
+  - component: {fileID: 5676149417337281241}
   m_Layer: 0
   m_Name: bullet_water
   m_TagString: Untagged
@@ -153,9 +153,9 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!120 &5767334382779361313
-LineRenderer:
-  serializedVersion: 2
+--- !u!96 &5676149417337281241
+TrailRenderer:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -201,9 +201,8 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Time: 0.1
+  m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -211,8 +210,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.04892966
-        value: 0.006944418
+        time: 0.012233734
+        value: 0.13888931
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -220,8 +219,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.9327356
-        value: 1
+        time: 1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -268,7 +267,8 @@ LineRenderer:
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
+  m_MinVertexDistance: 0.1
   m_MaskInteraction: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
+  m_Autodestruct: 0
+  m_Emitting: 1
   m_ApplyActiveColorSpace: 1

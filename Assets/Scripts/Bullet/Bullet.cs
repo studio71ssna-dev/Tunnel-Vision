@@ -2,22 +2,41 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
     private BulletData _data;
     private Rigidbody _rb;
+    private TrailRenderer _trail; // *** NEW REFERENCE ***
     private CancellationTokenSource _cts;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _trail = GetComponent<TrailRenderer>(); // Auto-find the component
     }
 
     public void Initialize(BulletData bulletData)
     {
         _data = bulletData;
 
+        // 1. Physics Setup
+        // Unity 6 / 2023+ syntax. Use 'velocity' for older versions.
         if (_rb != null) _rb.linearVelocity = transform.forward * _data.speed;
+
+        // 2. Trail Setup (Visuals)
+        if (_trail != null)
+        {
+            // Apply the color from your BulletData (e.g., Red for Fire)
+            _trail.startColor = _data.elementColor;
+            // Fade out the end of the trail
+            _trail.endColor = new Color(_data.elementColor.r, _data.elementColor.g, _data.elementColor.b, 0f);
+
+            // *** CRITICAL FIX FOR POOLING ***
+            // Clears the old path so you don't see a line stretch from the death point to spawn point
+            _trail.Clear();
+            _trail.emitting = true;
+        }
 
         if (_cts != null) _cts.Dispose();
         _cts = new CancellationTokenSource();
@@ -27,28 +46,29 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-  
+        // DEBUG: Helps track what we hit
+        // Debug.Log($"Bullet hit: {other.name}");
+
         if (_data == null || ((1 << other.gameObject.layer) & _data.hitLayers) == 0) return;
 
-        // 2. APPLY DAMAGE
-        // We look for the IDamageable interface on the object we hit
+        // Damage Logic
         if (other.TryGetComponent<IDamageable>(out IDamageable target))
         {
             target.TakeDamage(_data.damage, _data.elementType);
         }
 
-        // 3. Visuals & Audio (Existing logic)
         if (_data.hitSound != null) AudioSource.PlayClipAtPoint(_data.hitSound, transform.position);
 
-        // 4. Destroy (Existing logic)
         if (_data.destroyOnHit) ReturnToPool();
     }
 
     private void ReturnToPool()
     {
+        // Stop drawing the trail immediately
+        if (_trail != null) _trail.emitting = false;
+
         _cts?.Cancel();
 
-        // *** UPDATED LINE ***
         if (ObjectPooler.Instance != null)
             ObjectPooler.Instance.ReturnToPool(_data.poolTag, gameObject);
         else
