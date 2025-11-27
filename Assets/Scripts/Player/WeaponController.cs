@@ -1,8 +1,10 @@
-using UnityEngine;
+using Unity.Cinemachine;
 using Cysharp.Threading.Tasks;
-using UnityEngine.Events;
 using Singletons;
+using UnityEngine;
+using UnityEngine.Events;
 
+[RequireComponent(typeof(CinemachineImpulseSource))] // *** NEW: Ensures we have the shake component ***
 public class WeaponController : MonoBehaviour
 {
     #region Variables
@@ -17,7 +19,7 @@ public class WeaponController : MonoBehaviour
     [Header("Events")]
     public UnityEvent<int, int> OnAmmoChanged; // (Current, Max)
     public UnityEvent<bool> OnReloadingState; // To show reload bar
-    public UnityEvent OnWeaponSwapped; // Invoked when weapon cycles (for UI color updates)
+    public UnityEvent OnBulletSwapped; // Invoked when weapon cycles (for UI color updates)
 
     // State
     private int _currentIndex = 0;
@@ -25,6 +27,10 @@ public class WeaponController : MonoBehaviour
     private bool _isReloading = false;
     private float _nextFireTime = 0f;
     private MaterialPropertyBlock _propBlock;
+
+    // Cached Component
+    private CinemachineImpulseSource _impulseSource; // *** NEW ***
+
     public BulletData CurrentWeapon => (_weapons != null && _weapons.Length > 0) ? _weapons[_currentIndex] : null;
 
     // New firing state for hold-to-fire
@@ -38,7 +44,9 @@ public class WeaponController : MonoBehaviour
         // Force lock cursor whenever this level loads
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
         _propBlock = new MaterialPropertyBlock();
+        _impulseSource = GetComponent<CinemachineImpulseSource>(); // *** NEW: Cache the shaker ***
     }
 
     private void Start()
@@ -49,7 +57,7 @@ public class WeaponController : MonoBehaviour
             _currentAmmo = CurrentWeapon.magazineSize;
             UpdateVisuals();
             OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
-            OnWeaponSwapped?.Invoke();
+            OnBulletSwapped?.Invoke();
         }
         else
         {
@@ -93,7 +101,7 @@ public class WeaponController : MonoBehaviour
         // Do NOT change shared ammo when swapping weapons. Just update visuals and notify UI of new max.
         UpdateVisuals();
         OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon != null ? CurrentWeapon.magazineSize : 0);
-        OnWeaponSwapped?.Invoke();
+        OnBulletSwapped?.Invoke();
     }
 
     // LINK TO: InputManager -> OnFireOutput (now receives press state)
@@ -103,6 +111,8 @@ public class WeaponController : MonoBehaviour
         _isFiringHeld = isPressed;
 
         // If pressed and we don't already have a firing loop running, start one
+        // We start the loop regardless of aiming, but the LOOP itself checks for aiming.
+        // This allows the player to hold fire, then aim, and it will start shooting immediately.
         if (isPressed && !_firingLoopActive)
         {
             FiringLoop().Forget();
@@ -130,6 +140,15 @@ public class WeaponController : MonoBehaviour
 
             while (_isFiringHeld)
             {
+                // *** NEW: AIM CHECK ***
+                // If the player is NOT aiming, we pause the loop here.
+                // We do not break the loop, because they might just be momentarily running.
+                if (InputManager.Instance == null || !InputManager.Instance.IsAiming)
+                {
+                    await UniTask.Yield();
+                    continue;
+                }
+
                 // If currently reloading, wait until reload finishes or player stops holding
                 if (_isReloading)
                 {
@@ -160,11 +179,18 @@ public class WeaponController : MonoBehaviour
                     continue;
                 }
 
-                // Fire one bullet
+                // ---------------- FIRE LOGIC ----------------
                 _nextFireTime = Time.time + CurrentWeapon.fireRate;
                 _currentAmmo--;
 
                 OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
+
+                // *** NEW: Trigger Camera Shake ***
+                if (_impulseSource != null)
+                {
+                    // Adjust the strength based on weapon data if you add a "recoilStrength" float to BulletData later
+                    _impulseSource.GenerateImpulse();
+                }
 
                 if (ObjectPooler.Instance == null)
                 {

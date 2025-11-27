@@ -31,7 +31,7 @@ namespace Singletons
             _weapon_controller = playerObj.GetComponentInChildren<WeaponController>();
             if (_weapon_controller != null)
             {
-                _weapon_controller.OnWeaponSwapped.AddListener(UpdateBulletColor);
+                _weapon_controller.OnBulletSwapped.AddListener(UpdateBulletColor);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Singletons
                 _weapon_controller = playerObj.GetComponentInChildren<WeaponController>();
                 if (_weapon_controller != null)
                 {
-                    _weapon_controller.OnWeaponSwapped.AddListener(UpdateBulletColor);
+                    _weapon_controller.OnBulletSwapped.AddListener(UpdateBulletColor);
                 }
             }
 

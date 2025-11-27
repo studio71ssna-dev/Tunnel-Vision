@@ -3063,6 +3063,7 @@ GameObject:
   - component: {fileID: 1376591381}
   - component: {fileID: 1376591380}
   - component: {fileID: 1376591379}
+  - component: {fileID: 1376591382}
   m_Layer: 0
   m_Name: InputHandler
   m_TagString: Untagged
@@ -3163,6 +3164,62 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 890da750-b061-4bc3-a63a-a14bb4c39dc1
     m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1376591378}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 8ea348d3-c155-47f2-9994-503fc03c5d0c
+    m_ActionName: 'Player/Aim[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1127e583-b152-4d50-ba76-0e2b56d2562e
+    m_ActionName: 'UI/Navigate[/DualSenseGamepadHID/leftStick/up,/DualSenseGamepadHID/rightStick/up,/DualSenseGamepadHID/leftStick/down,/DualSenseGamepadHID/rightStick/down,/DualSenseGamepadHID/leftStick/left,/DualSenseGamepadHID/rightStick/left,/DualSenseGamepadHID/leftStick/right,/DualSenseGamepadHID/rightStick/right,/DualSenseGamepadHID/dpad,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e7dd54f1-456d-4c29-bec4-978216976f81
+    m_ActionName: 'UI/Submit[/Keyboard/enter,/DualSenseGamepadHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e3d014ef-d0de-45cd-ad97-4c4ac2187efe
+    m_ActionName: 'UI/Cancel[/Keyboard/escape,/DualSenseGamepadHID/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4dcfeeea-1442-432b-ba97-16b9602f4f61
+    m_ActionName: 'UI/Point[/Mouse/position]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8e3b14a1-5c34-47e3-91a8-ba34482964a8
+    m_ActionName: 'UI/Click[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 30e446af-b542-4070-9d6e-ebdf9f21f25e
+    m_ActionName: 'UI/ScrollWheel[/Mouse/scroll]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7a7e95d7-19c6-4dc7-8308-5e3b4f2e663a
+    m_ActionName: 'UI/MiddleClick[/Mouse/middleButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b347220c-dab2-4835-b844-e754ab5e16c8
+    m_ActionName: 'UI/RightClick[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3a595d6b-4573-403e-833e-85f48473549f
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8a450a87-6bcd-461d-8770-18d76a9b0993
+    m_ActionName: UI/TrackedDeviceOrientation
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -3183,6 +3240,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1376591382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376591378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f57a777a3828243b43b478d8104e96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimManager
+  aimCamera: {fileID: 1900476925}
+  highPriority: 20
+  lowPriority: 0
+  vignetteCanvasGroup: {fileID: 1814262004}
+  vignetteSpeed: 15
 --- !u!1 &1451775094
 GameObject:
   m_ObjectHideFlags: 0
@@ -4188,6 +4262,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7507501101374053384, guid: 516f5b8c780f050499e83e3e45588ae9, type: 3}
   m_PrefabInstance: {fileID: 1875463162}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1900476925 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8662915610167210240, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
+  m_PrefabInstance: {fileID: 1920710077089138130}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1001 &1911735943
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4767,10 +4852,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 881489028036568269, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
-      propertyPath: maxHealth
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 881489028036568269, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 782039030}
@@ -4782,21 +4863,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 2774450351179357139, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3088628713602253871, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 15.09
+      value: 2.2
       objectReference: {fileID: 0}
     - target: {fileID: 3088628713602253871, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.573
+      value: 7.16
       objectReference: {fileID: 0}
     - target: {fileID: 3088628713602253871, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 48.949
+      value: -19.79
       objectReference: {fileID: 0}
     - target: {fileID: 3088628713602253871, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4826,10 +4903,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3568959656398659707, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
-      propertyPath: vignetteCanvasGroup
-      value: 
-      objectReference: {fileID: 1814262004}
     - target: {fileID: 5649777279913844140, guid: 7389440791f8cac43ab0e54a6fd1d94f, type: 3}
       propertyPath: OnAmmoChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
