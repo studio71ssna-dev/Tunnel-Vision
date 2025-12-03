@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8549733509724034419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6366814580810711904}
+  - component: {fileID: 2336473572792887910}
+  m_Layer: 0
+  m_Name: ShopManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6366814580810711904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8549733509724034419}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -14.1438, y: 2.80182, z: 37.463898}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2336473572792887910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8549733509724034419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa743d7286ae041b8a653750ba65bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopManager
+  _itemsForSale:
+  - weaponData: {fileID: 11400000, guid: dd4866c3a84fca2479e19229ef80450f, type: 2}
+    price: 10
+    buyButton: {fileID: 0}
+    priceText: {fileID: 0}
+  - weaponData: {fileID: 11400000, guid: 918f20a7ec0de3840b150c1ca0a1f58c, type: 2}
+    price: 15
+    buyButton: {fileID: 0}
+    priceText: {fileID: 0}
+  - weaponData: {fileID: 11400000, guid: 60bfa4871313bcc4bb3b1b42a879efb4, type: 2}
+    price: 20
+    buyButton: {fileID: 0}
+    priceText: {fileID: 0}
+  _nextLevelName: Level2
+  _forecastText: {fileID: 0}
+  _walletText: {fileID: 0}
