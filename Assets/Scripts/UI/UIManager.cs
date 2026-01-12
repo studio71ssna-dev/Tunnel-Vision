@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace Singletons
 {
-    public class UIManager : SingletonPersistent
+    public class UIManager : MonoBehaviour
     {
         [Header("Player UI")]
         [SerializeField] private Slider healthSlider;

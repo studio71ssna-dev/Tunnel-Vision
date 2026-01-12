@@ -1,10 +1,10 @@
 using Unity.Cinemachine;
 using Cysharp.Threading.Tasks;
-using Singletons;
+using Singletons; // Required for InputManager and PlayerLoadout
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CinemachineImpulseSource))] // *** NEW: Ensures we have the shake component ***
+[RequireComponent(typeof(CinemachineImpulseSource))]
 public class WeaponController : MonoBehaviour
 {
     #region Variables
@@ -14,7 +14,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private int _emissionMaterialIndex = 0; // Usually 0 or 1
 
     [Header("Arsenal")]
-    [SerializeField] private BulletData[] _weapons; // Drag Fire, Ice, Rock Data here
+    // This will be overwritten by PlayerLoadout if it exists
+    [SerializeField] private BulletData[] _weapons;
 
     [Header("Events")]
     public UnityEvent<int, int> OnAmmoChanged; // (Current, Max)
@@ -29,9 +30,11 @@ public class WeaponController : MonoBehaviour
     private MaterialPropertyBlock _propBlock;
 
     // Cached Component
-    private CinemachineImpulseSource _impulseSource; // *** NEW ***
+    private CinemachineImpulseSource _impulseSource;
 
-    public BulletData CurrentWeapon => (_weapons != null && _weapons.Length > 0) ? _weapons[_currentIndex] : null;
+    public BulletData CurrentWeapon => (_weapons != null && _weapons.Length > 0 && _currentIndex < _weapons.Length)
+        ? _weapons[_currentIndex]
+        : null;
 
     // New firing state for hold-to-fire
     private bool _isFiringHeld = false; // true while input is held
@@ -46,35 +49,49 @@ public class WeaponController : MonoBehaviour
         Cursor.visible = false;
 
         _propBlock = new MaterialPropertyBlock();
-        _impulseSource = GetComponent<CinemachineImpulseSource>(); // *** NEW: Cache the shaker ***
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     private void Start()
     {
+        // ---------------------------------------------------------
+        // *** CRITICAL INTEGRATION: CONNECT TO SHOP LOADOUT ***
+        // ---------------------------------------------------------
+        // Check if the Singleton exists and has weapons (from the Shop scene)
+        if (PlayerLoadout.Instance != null && PlayerLoadout.Instance.EquippedWeapons.Count > 0)
+        {
+            // Overwrite local array with the persistent loadout
+            _weapons = PlayerLoadout.Instance.EquippedWeapons.ToArray();
+            // Reset index to be safe
+            _currentIndex = 0;
+        }
+        // ---------------------------------------------------------
+
         // Initialize Ammo for the first gun (shared magazine across weapons)
         if (CurrentWeapon != null)
         {
             _currentAmmo = CurrentWeapon.magazineSize;
             UpdateVisuals();
+            // Notify UI immediately
             OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
             OnBulletSwapped?.Invoke();
         }
         else
         {
-            Debug.LogWarning("WeaponController: No weapons configured (\"_weapons\" is null or empty).");
+            Debug.LogWarning("WeaponController: No weapons configured. Check Inspector or PlayerLoadout.");
         }
     }
+
     private void OnEnable()
     {
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnSwap += CycleWeapon;
-            // Subscribe to OnShoot which provides a bool for performed state
-            InputManager.Instance.OnShoot += Fire;
-            // Subscribe to reload action so pressing R calls StartReload
+            InputManager.Instance.OnShoot += Fire; // Subscribes to bool event
             InputManager.Instance.OnReload += StartReload;
         }
     }
+
     private void OnDisable()
     {
         if (InputManager.Instance != null)
@@ -84,7 +101,6 @@ public class WeaponController : MonoBehaviour
             InputManager.Instance.OnReload -= StartReload;
         }
     }
-
     #endregion
 
     #region Created Method
@@ -98,21 +114,19 @@ public class WeaponController : MonoBehaviour
         // Loop Logic
         if (_currentIndex >= _weapons.Length) _currentIndex = 0;
 
-        // Do NOT change shared ammo when swapping weapons. Just update visuals and notify UI of new max.
+        // Visual / UI Updates
         UpdateVisuals();
         OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon != null ? CurrentWeapon.magazineSize : 0);
         OnBulletSwapped?.Invoke();
     }
 
-    // LINK TO: InputManager -> OnFireOutput (now receives press state)
+    // LINK TO: InputManager -> OnFireOutput (receives press state)
     private void Fire(bool isPressed)
     {
         // Update hold state
         _isFiringHeld = isPressed;
 
-        // If pressed and we don't already have a firing loop running, start one
-        // We start the loop regardless of aiming, but the LOOP itself checks for aiming.
-        // This allows the player to hold fire, then aim, and it will start shooting immediately.
+        // If pressed and we don't already have a firing loop running, start one.
         if (isPressed && !_firingLoopActive)
         {
             FiringLoop().Forget();
@@ -125,57 +139,41 @@ public class WeaponController : MonoBehaviour
         _firingLoopActive = true;
         try
         {
-            // Basic safety checks before starting
-            if (CurrentWeapon == null)
-            {
-                Debug.LogWarning("WeaponController: No CurrentWeapon available. Aborting firing loop.");
-                return;
-            }
-
-            if (_muzzlePoint == null)
-            {
-                Debug.LogWarning("WeaponController: Muzzle point is not assigned. Aborting firing loop.");
-                return;
-            }
+            // Basic safety checks
+            if (CurrentWeapon == null || _muzzlePoint == null) return;
 
             while (_isFiringHeld)
             {
-                // *** NEW: AIM CHECK ***
-                // If the player is NOT aiming, we pause the loop here.
-                // We do not break the loop, because they might just be momentarily running.
+                // *** AIM CHECK ***
+                // Pause loop if not aiming (must aim to shoot)
                 if (InputManager.Instance == null || !InputManager.Instance.IsAiming)
                 {
                     await UniTask.Yield();
                     continue;
                 }
 
-                // If currently reloading, wait until reload finishes or player stops holding
+                // Pause if reloading
                 if (_isReloading)
                 {
                     await UniTask.Yield();
                     continue;
                 }
 
-                // Respect fire rate
+                // Fire Rate Check
                 if (Time.time < _nextFireTime)
                 {
                     await UniTask.Yield();
                     continue;
                 }
 
-                // If out of ammo, DO NOT auto-reload: wait until ammo is replenished externally or the player releases
+                // Ammo Check (Pause if empty, wait for refill or release)
                 if (_currentAmmo <= 0)
                 {
-                    // Wait while player holds and ammo is zero
                     while (_currentAmmo <= 0 && _isFiringHeld)
                     {
                         await UniTask.Yield();
                     }
-
-                    // If player released while waiting, exit loop
                     if (!_isFiringHeld) break;
-
-                    // If ammo was replenished, continue firing
                     continue;
                 }
 
@@ -185,36 +183,28 @@ public class WeaponController : MonoBehaviour
 
                 OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
 
-                // *** NEW: Trigger Camera Shake ***
+                // Camera Shake
                 if (_impulseSource != null)
                 {
-                    // Adjust the strength based on weapon data if you add a "recoilStrength" float to BulletData later
                     _impulseSource.GenerateImpulse();
                 }
 
-                if (ObjectPooler.Instance == null)
+                // Spawn Bullet
+                if (ObjectPooler.Instance != null)
                 {
-                    Debug.LogWarning("WeaponController: ObjectPooler instance is null. Cannot spawn bullets.");
-                }
-                else
-                {
-                    GameObject bulletObj = ObjectPooler.Instance.SpawnFromPool
-                    (
-                    CurrentWeapon.poolTag,
-                    _muzzlePoint.position,
-                    _muzzlePoint.rotation
+                    GameObject bulletObj = ObjectPooler.Instance.SpawnFromPool(
+                        CurrentWeapon.poolTag,
+                        _muzzlePoint.position,
+                        _muzzlePoint.rotation
                     );
 
-                    if (bulletObj != null)
+                    if (bulletObj != null && bulletObj.TryGetComponent<Bullet>(out var bulletScript))
                     {
-                        if (bulletObj.TryGetComponent<Bullet>(out var bulletScript))
-                        {
-                            bulletScript.Initialize(CurrentWeapon);
-                        }
+                        bulletScript.Initialize(CurrentWeapon);
                     }
                 }
 
-                // Yield a frame before checking loop conditions again so fire rate is enforced by _nextFireTime
+                // Yield frame
                 await UniTask.Yield();
             }
         }
@@ -233,15 +223,15 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    // Made awaitable so firing loop can wait for reload to complete
     private async UniTask ReloadRoutine()
     {
         _isReloading = true;
         OnReloadingState?.Invoke(true);
 
-        // Wait (converts seconds to milliseconds)
+        // Convert seconds to milliseconds for UniTask
         await UniTask.Delay((int)(CurrentWeapon.reloadTime * 1000));
 
+        // Refill
         _currentAmmo = CurrentWeapon.magazineSize;
         OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
 
@@ -259,13 +249,11 @@ public class WeaponController : MonoBehaviour
         _gunMesh.SetPropertyBlock(_propBlock, _emissionMaterialIndex);
     }
 
-    // Expose current weapon reload time for UI
     public float GetCurrentReloadTime()
     {
         return CurrentWeapon != null ? CurrentWeapon.reloadTime : 0f;
     }
 
-    // Expose current magazine size for UI population
     public int GetCurrentMagazineSize()
     {
         return CurrentWeapon != null ? CurrentWeapon.magazineSize : 0;
