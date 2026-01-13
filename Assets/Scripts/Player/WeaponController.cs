@@ -72,7 +72,6 @@ public class WeaponController : MonoBehaviour
         {
             _currentAmmo = CurrentWeapon.magazineSize;
             UpdateVisuals();
-            // Notify UI immediately
             OnAmmoChanged?.Invoke(_currentAmmo, CurrentWeapon.magazineSize);
             OnBulletSwapped?.Invoke();
         }
@@ -86,8 +85,7 @@ public class WeaponController : MonoBehaviour
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnSwap += CycleWeapon;
-            InputManager.Instance.OnShoot += Fire; // Subscribes to bool event
+            InputManager.Instance.OnShoot += Fire;
             InputManager.Instance.OnReload += StartReload;
         }
     }

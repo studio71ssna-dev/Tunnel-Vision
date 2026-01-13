@@ -13,7 +13,10 @@ namespace Singletons
         public delegate void OnActionEvent();
         private InputAction MoveInput;
         private InputAction LookInput;
-        private InputAction AimInput; // *** NEW: Input Action for Aiming ***
+        private InputAction AimInput;
+        private InputAction InteractInput;
+
+      
         #endregion
 
         #region General Methods
@@ -27,6 +30,7 @@ namespace Singletons
         public event Action<bool> OnShoot;
         public event OnActionEvent OnReload;
         public event OnActionEvent OnSwap;
+        public event Action OnInteract;
         #endregion
 
         #region General Methods
@@ -42,7 +46,8 @@ namespace Singletons
 
             MoveInput = playerInput.actions.FindAction("Move");
             LookInput = playerInput.actions.FindAction("Look");
-            AimInput = playerInput.actions.FindAction("Aim"); // *** NEW: Initialize Aim Action ***
+            AimInput = playerInput.actions.FindAction("Aim");
+            InteractInput = playerInput.actions.FindAction("Interact");
 
             // Expanded error checking to include AimInput
             if (MoveInput == null || LookInput == null)
@@ -98,11 +103,19 @@ namespace Singletons
             }
         }
 
+        public void InteractAction(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                OnInteract?.Invoke();
+            Debug.Log("Interact action performed.");
+        }
+
         public void ShootAction(InputAction.CallbackContext context)
         {
             if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Performed)
             {
                 OnShoot?.Invoke(true);
+                Debug.Log("Shoot action started or performed.");
             }
             else if (context.phase == InputActionPhase.Canceled)
             {

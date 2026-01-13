@@ -14,9 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ShopMenu.unity
     guid: ff464acd2c0e76b4fa323c2421934de7
-  - enabled: 1
-    path: Assets/Scenes/TunnelVision2.unity
-    guid: 04752e0b0076a8d41b13bd89b84077d7
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: afeaab03670aead42ad7e197b22ad74b, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: c035f491c8e7e2843a3afeec055d4b59, type: 3}

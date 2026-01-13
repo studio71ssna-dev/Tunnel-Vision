@@ -1,31 +1,53 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+using Singletons;
 
 public class LootPickup : MonoBehaviour
 {
-    [Header("Settings")]
-    [SerializeField] private int _scoreAmount = 50;
-    [SerializeField] private string _pickupSoundName = "CoinPickup"; // Optional: If you have audio
+    [Header("Loot Settings")]
+    [SerializeField] private ElementType lootType;
+    [SerializeField] private int lootAmount = 50;
+
+    private bool _playerInRange;
+    private ToolController _toolController;
+
+    private void Start()
+    {
+        _toolController = FindObjectOfType<ToolController>();
+    }
+
+    private void OnEnable()
+    {
+        InputManager.Instance.OnInteract += TryCollect;
+    }
+
+    private void OnDisable()
+    {
+        if (InputManager.Instance != null)
+            InputManager.Instance.OnInteract -= TryCollect;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
-        {
-            // 1. Add Score
-            if (ScoreManager.Instance != null)
-            {
-                ScoreManager.Instance.AddScore(_scoreAmount);
-            }
+            _playerInRange = true;
+    }
 
-            // 2. Play Sound (Optional - purely for "juice")
-            // AudioSource.PlayClipAtPoint(_pickupClip, transform.position);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            _playerInRange = false;
+    }
 
-            // 3. Recycle
-            // Ensure "LootOrb" matches your ObjectPool tag exactly
-            if (ObjectPooler.Instance != null)
-                ObjectPooler.Instance.ReturnToPool("LootOrb", gameObject);
-            else
-                Destroy(gameObject);
-        }
+    private void TryCollect()
+    {
+        if (!_playerInRange) return;
+        if (InputManager.Instance.IsAiming) return;
+
+        if (!ToolRules.CanCollect(lootType, _toolController.CurrentTool))
+            return;
+
+        ScoreManager.Instance.AddScore(lootAmount);
+
+        ObjectPooler.Instance.ReturnToPool(lootType + "Loot", gameObject);
     }
 }

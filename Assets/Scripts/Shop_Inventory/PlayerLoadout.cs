@@ -11,6 +11,7 @@ namespace Singletons
         [Header("Inventory")]
         // The weapons the player currently owns and will take to the next level
         public List<BulletData> EquippedWeapons = new List<BulletData>();
+        public List<ToolType> EquippedTools = new();
 
         // Default weapon (fallback if player buys nothing)
         [SerializeField] private BulletData _defaultWeapon;
@@ -22,6 +23,16 @@ namespace Singletons
             {
                 EquippedWeapons.Add(_defaultWeapon);
             }
+        }
+
+        public bool HasToolFor(ElementType lootType)
+        {
+            foreach (var tool in EquippedTools)
+            {
+                if (ToolRules.CanCollect(lootType, tool))
+                    return true;
+            }
+            return false;
         }
 
         public void AddWeapon(BulletData newWeapon)
