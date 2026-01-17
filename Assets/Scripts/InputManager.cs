@@ -60,9 +60,6 @@ namespace Singletons
                 Debug.LogError("Input System action 'Aim' is missing! Make sure you added it to your Input Action Asset with the name 'Aim'.");
             }
 
-            // Lock and hide cursor
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         private void Update()
@@ -115,7 +112,6 @@ namespace Singletons
             if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Performed)
             {
                 OnShoot?.Invoke(true);
-                Debug.Log("Shoot action started or performed.");
             }
             else if (context.phase == InputActionPhase.Canceled)
             {

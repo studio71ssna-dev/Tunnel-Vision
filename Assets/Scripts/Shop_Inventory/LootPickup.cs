@@ -12,7 +12,7 @@ public class LootPickup : MonoBehaviour
 
     private void Start()
     {
-        _toolController = FindObjectOfType<ToolController>();
+        _toolController = FindFirstObjectByType<ToolController>();
     }
 
     private void OnEnable()

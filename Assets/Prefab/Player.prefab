@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8571386994058570605}
   - component: {fileID: 7016458461901173352}
   - component: {fileID: 2780985811802200330}
+  - component: {fileID: 8778450553046490291}
   m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -171,6 +172,23 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!114 &8778450553046490291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42702809920489744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1bbee2d1a7f82f49bafa7ded6afd4f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  _virtualCamera: {fileID: 256329227664322395}
+  _weaponController: {fileID: 5649777279913844140}
+  _defaultFOV: 60
+  _zoomFOV: 45
+  _zoomSpeed: 10
 --- !u!1 &1622534836516560363
 GameObject:
   m_ObjectHideFlags: 0
@@ -305,6 +323,7 @@ GameObject:
   - component: {fileID: 6025401039864014670}
   - component: {fileID: 685797777231920757}
   - component: {fileID: 5017494898618798133}
+  - component: {fileID: 7179361955812248129}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -359,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7a1c0f89283d5499c81261301b9170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 200
+  maxHealth: 5000
   OnTakeDmg:
     m_PersistentCalls:
       m_Calls:
@@ -448,6 +467,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSwapManager
   weaponController: {fileID: 5649777279913844140}
   toolController: {fileID: 685797777231920757}
+--- !u!114 &7179361955812248129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2774450351179357139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f57a777a3828243b43b478d8104e96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimManager
+  aimCamera: {fileID: 0}
+  highPriority: 20
+  lowPriority: 0
+  vignetteCanvasGroup: {fileID: 0}
+  vignetteSpeed: 10
 --- !u!1 &3013753702389225545
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,7 +599,7 @@ Transform:
   m_GameObject: {fileID: 3400715315934327578}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.75, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -589,7 +625,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 3088628713602253871}
+    TrackingTarget: {fileID: 6918744773631700399}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -1123,7 +1159,7 @@ MonoBehaviour:
     DissipationMode: 2
     DissipationDistance: 100
     PropagationSpeed: 343
-  DefaultVelocity: {x: 0, y: -1, z: 0}
+  DefaultVelocity: {x: 1, y: -1, z: 1}
 --- !u!1 &7593438702111752679
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,7 +1186,7 @@ Transform:
   m_GameObject: {fileID: 7593438702111752679}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.655, y: -0.8579998, z: 2.050003}
+  m_LocalPosition: {x: 0.655, y: -0.86, z: 2.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1176,7 +1212,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 0}
+    TrackingTarget: {fileID: 6918744773631700399}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:

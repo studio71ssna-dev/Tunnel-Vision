@@ -27,6 +27,7 @@ public class ShopManager : MonoBehaviour
     {
         // 1. Display Forecast (Strategy Phase)
         UpdateForecastDisplay();
+        CursorManager.UnlockCursor();
 
         // 2. Setup Shop Buttons
         foreach (var item in _itemsForSale)
@@ -103,6 +104,7 @@ public class ShopManager : MonoBehaviour
 
     public void OnStartLevelClicked()
     {
+        CursorManager.LockCursor();
         SceneManager.LoadScene(_nextLevelName);
     }
 }
