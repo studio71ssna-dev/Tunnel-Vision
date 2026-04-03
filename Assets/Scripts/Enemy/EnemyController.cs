@@ -10,7 +10,8 @@ public class EnemyController : MonoBehaviour
     [Header("Data Config")]
     [SerializeField] private EnemyType _enemyType;
     [SerializeField] private float _maxHealth = 100f;
-    [SerializeField] private string _lootTag = "LootOrb";
+    [SerializeField] private ElementType lootType;
+
 
     [Header("AI Settings")]
     [SerializeField] private float _stopDistance = 8f;
@@ -215,9 +216,8 @@ public class EnemyController : MonoBehaviour
         // Spawn Loot
         if (ObjectPooler.Instance != null)
         {
-            // Use the new 'spawnPos' instead of 'transform.position'
-            ObjectPooler.Instance.SpawnFromPool(_lootTag, spawnPos, Quaternion.identity);
-            ObjectPooler.Instance.ReturnToPool(GetPoolTag(), gameObject);
+            ObjectPooler.Instance.SpawnFromPool(lootType + "Loot", spawnPos, Quaternion.identity );
+            Destroy(gameObject);
         }
         else
         {

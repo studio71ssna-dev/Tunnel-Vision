@@ -15,11 +15,9 @@ public class ScoreManager : MonoBehaviour
 
     private void Awake()
     {
-        // Simple Singleton
+
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        // Load High Score
         _highScore = PlayerPrefs.GetInt("HighScore", 0);
     }
 
@@ -48,6 +46,19 @@ public class ScoreManager : MonoBehaviour
         return _highScore;
     }
 
+    public bool AttemptPurchase(int cost)
+    {
+        if (_currentScore >= cost)
+        {
+            _currentScore -= cost;
+            UpdateUI();
+            return true; // Success
+        }
+        return false; // Not enough cash
+    }
+    // Optional: Carry score over to the shop scene
+    // Ensure you check the "DontDestroyOnLoad" logic if ScoreManager isn't already persistent.
+    // Since it's a SingletonPersistent, it should already survive scene loads.
     private void UpdateUI()
     {
         if (_scoreTextHUD != null)

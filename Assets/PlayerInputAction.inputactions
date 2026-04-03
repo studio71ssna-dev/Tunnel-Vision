@@ -25,6 +25,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Aim",
+                    "type": "Button",
+                    "id": "8ea348d3-c155-47f2-9994-503fc03c5d0c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Fire",
                     "type": "Button",
                     "id": "b02697c4-bcb8-4af4-92f6-a12faed4189b",
@@ -46,6 +55,15 @@
                     "name": "Swap",
                     "type": "Button",
                     "id": "1e254fb7-46a8-4127-b0fd-8f0e99582a8b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "990d0329-e824-4aa7-b049-f661329cbf0f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -151,6 +169,28 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "9b2a3f03-0741-406f-955b-6c8f0eb46a4a",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "68ba6b7d-131c-4c8f-a198-f94aa9208dc0",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

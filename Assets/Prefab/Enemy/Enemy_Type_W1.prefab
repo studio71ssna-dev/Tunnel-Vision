@@ -621,7 +621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   _enemyType: {fileID: 11400000, guid: a181008c48240604b8f6edb311550383, type: 2}
   _maxHealth: 100
-  _lootTag: LootOrb
+  lootType: 1
   _stopDistance: 40
   _rotationSpeed: 10
   _firePoint: {fileID: 6649460757304370558}

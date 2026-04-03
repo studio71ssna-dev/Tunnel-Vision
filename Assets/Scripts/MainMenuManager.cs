@@ -17,6 +17,7 @@ public class MainMenuManager : MonoBehaviour
     public void OnStartClicked()
     {
         // Load the actual game
+        CursorManager.LockCursor();
         SceneManager.LoadScene(_gameplaySceneName);
     }
 
