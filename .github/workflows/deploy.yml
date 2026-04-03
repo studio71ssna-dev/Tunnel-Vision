@@ -1,0 +1,73 @@
+name: Build and Deploy Unity to itch.io
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build & Push (${{ matrix.targetPlatform }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: WebGL
+            itchChannel: html
+          - targetPlatform: StandaloneWindows64
+            itchChannel: windows
+          - targetPlatform: Android
+            itchChannel: android
+
+    steps:
+      # 1. Pull your code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true 
+
+      # 2. CACHE THE LIBRARY FOLDER (The Speed Boost!)
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      # 3. Free up disk space 
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+          docker-images: false
+
+      # 4. Build the Game
+      - name: Build Unity Game
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: TunnelVision
+
+      # 5. Upload to Itch.io
+      - name: Push to itch.io
+        uses: manleydev/butler-publish-itchio-action@master 
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: ${{ matrix.itchChannel }}
+          ITCH_GAME: tunnel-vision
+          ITCH_USER: studio-71
+          PACKAGE: build/${{ matrix.targetPlatform }}
