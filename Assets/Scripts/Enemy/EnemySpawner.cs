@@ -1,17 +1,21 @@
+// EnemySpawner.cs  (replaces old version)
+// Unchanged public API — still uses ObjectPooler with weighted random tags.
+// Now spawns EnemyBase descendants instead of the old EnemyController.
+// UniTask async loops preserved exactly as before.
+
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
-using System.Linq;
 
 public class EnemySpawner : MonoBehaviour
 {
     [System.Serializable]
     public struct EnemySpawnWeight
     {
-        [Tooltip("Must match the tag in ObjectPooler (e.g. 'EnemyFire')")]
+        [Tooltip("Must match the tag in ObjectPooler (e.g. 'EnemyBrute')")]
         public string poolTag;
-        [Tooltip("Higher number = higher chance to spawn")]
+        [Tooltip("Higher = higher spawn chance")]
         public float weight;
     }
 
@@ -20,12 +24,12 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform[] _spawnPoints;
 
     [Header("Spawn Timing")]
-    [SerializeField] private float _startSpawnInterval = 3f;
+    [SerializeField] private float _startSpawnInterval  = 3f;
     [SerializeField] private float _minimumSpawnInterval = 0.5f;
 
-    [Header("Difficulty Settings")]
-    [SerializeField] private float _rampFrequency = 10f; // Every 10 seconds
-    [SerializeField] private float _rampReduction = 0.2f; // Reduce interval by 0.2s
+    [Header("Difficulty Ramp")]
+    [SerializeField] private float _rampFrequency  = 10f;
+    [SerializeField] private float _rampReduction  = 0.2f;
 
     private float _currentInterval;
     private CancellationTokenSource _cts;
@@ -34,29 +38,22 @@ public class EnemySpawner : MonoBehaviour
     {
         _currentInterval = _startSpawnInterval;
 
-        if (_enemies == null || _enemies.Count == 0 || _spawnPoints.Length == 0)
+        if (_enemies == null || _enemies.Count == 0 || _spawnPoints == null || _spawnPoints.Length == 0)
         {
-            Debug.LogError("EnemySpawner: Missing Spawn Points or Enemy Weights.");
+            Debug.LogError("[EnemySpawner] Missing spawn points or enemy weights.");
             return;
         }
 
-        // Initialize Token for clean Async cleanup
         _cts = new CancellationTokenSource();
-
-        // Fire and Forget the loops
         SpawnLoop(_cts.Token).Forget();
         DifficultyLoop(_cts.Token).Forget();
     }
 
     private async UniTaskVoid SpawnLoop(CancellationToken token)
     {
-        // We use a while loop that checks for cancellation automatically
         while (!token.IsCancellationRequested)
         {
             SpawnEnemy();
-
-            // Wait for the current interval
-            // Note: Converting float seconds to milliseconds for Delay
             await UniTask.Delay((int)(_currentInterval * 1000), cancellationToken: token);
         }
     }
@@ -65,59 +62,47 @@ public class EnemySpawner : MonoBehaviour
     {
         while (!token.IsCancellationRequested)
         {
-            // Wait for the ramp frequency duration
             await UniTask.Delay((int)(_rampFrequency * 1000), cancellationToken: token);
 
-            // Make game harder
             if (_currentInterval > _minimumSpawnInterval)
             {
-                _currentInterval -= _rampReduction;
-                _currentInterval = Mathf.Max(_currentInterval, _minimumSpawnInterval);
+                _currentInterval = Mathf.Max(
+                    _currentInterval - _rampReduction,
+                    _minimumSpawnInterval);
 
-                Debug.Log($"<color=red>Alert:</color> Spawn Rate increased! New Interval: {_currentInterval}");
+                Debug.Log($"[EnemySpawner] Spawn interval → {_currentInterval:F2}s");
             }
         }
     }
 
     private void SpawnEnemy()
     {
-        // 1. Pick Random Position
         Transform pos = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+        string tag    = GetWeightedRandomTag();
 
-        // 2. Pick Random Enemy based on Weight
-        string tagToSpawn = GetWeightedRandomTag();
-
-        if (!string.IsNullOrEmpty(tagToSpawn))
-        {
-            // Using your existing ObjectPooler logic
-            ObjectPooler.Instance.SpawnFromPool(tagToSpawn, pos.position, pos.rotation);
-        }
+        if (!string.IsNullOrEmpty(tag))
+            ObjectPooler.Instance.SpawnFromPool(tag, pos.position, pos.rotation);
     }
 
     private string GetWeightedRandomTag()
     {
-        float totalWeight = 0f;
-        foreach (var enemy in _enemies) totalWeight += enemy.weight;
+        float total = 0f;
+        foreach (var e in _enemies) total += e.weight;
 
-        float randomValue = Random.Range(0, totalWeight);
-        float currentWeight = 0f;
+        float roll    = Random.Range(0f, total);
+        float current = 0f;
 
-        foreach (var enemy in _enemies)
+        foreach (var e in _enemies)
         {
-            currentWeight += enemy.weight;
-            if (randomValue <= currentWeight)
-            {
-                return enemy.poolTag;
-            }
+            current += e.weight;
+            if (roll <= current) return e.poolTag;
         }
 
-        // Fallback (should theoretically not reach here)
         return _enemies[0].poolTag;
     }
 
     private void OnDisable()
     {
-        // IMPORTANT: Cancel the tasks so they don't run in the background or error out
         _cts?.Cancel();
         _cts?.Dispose();
         _cts = null;
