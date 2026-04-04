@@ -18,9 +18,6 @@ jobs:
             itchChannel: html
           - targetPlatform: StandaloneWindows64
             itchChannel: windows
-          # ⚠️ Enable Android later if needed (slow)
-          # - targetPlatform: Android
-          #   itchChannel: android
 
     steps:
       # 1️⃣ Checkout
@@ -30,7 +27,7 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      # 2️⃣ Cache Library (HUGE speed boost)
+      # 2️⃣ Cache Unity Library
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
@@ -40,7 +37,7 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
 
-      # 3️⃣ Free Disk Space (Unity needs it)
+      # 3️⃣ Free Disk Space
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -63,20 +60,25 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: TunnelVision
 
-      # 5️⃣ Compress Build (important for itch)
+      # ✅ FIX: Permission issue from Unity container
+      - name: Fix Permissions
+        run: sudo chown -R $USER:$USER build
+
+      # 5️⃣ Zip Build (safe now)
       - name: Zip Build
         run: |
           cd build/${{ matrix.targetPlatform }}
-          zip -r ../${{ matrix.targetPlatform }}.zip .
+          zip -r ${{ matrix.targetPlatform }}.zip .
+          mv ${{ matrix.targetPlatform }}.zip ../
 
-      # 6️⃣ Save Artifact (backup if itch fails)
+      # 6️⃣ Save Artifact (backup)
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}.zip
 
-      # 7️⃣ Push to itch (LATEST channel)
+      # 7️⃣ Push to itch (latest)
       - name: Push to itch.io (latest)
         uses: manleydev/butler-publish-itchio-action@master
         env:
@@ -86,7 +88,7 @@ jobs:
           ITCH_USER: studio-71
           PACKAGE: build/${{ matrix.targetPlatform }}.zip
 
-      # 8️⃣ Push versioned build (history preserved)
+      # 8️⃣ Push to itch (versioned backup)
       - name: Push to itch.io (versioned)
         uses: manleydev/butler-publish-itchio-action@master
         env:
