@@ -1,15 +1,15 @@
-name: Build and Deploy Unity to itch.io
+name: 🎮 Build & Deploy Unity (TunnelVision)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     name: Build & Push (${{ matrix.targetPlatform }})
     runs-on: ubuntu-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
@@ -18,28 +18,29 @@ jobs:
             itchChannel: html
           - targetPlatform: StandaloneWindows64
             itchChannel: windows
-          - targetPlatform: Android
-            itchChannel: android
+          # ⚠️ Enable Android later if needed (slow)
+          # - targetPlatform: Android
+          #   itchChannel: android
 
     steps:
-      # 1. Pull your code
+      # 1️⃣ Checkout
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true 
+          lfs: true
 
-      # 2. CACHE THE LIBRARY FOLDER (The Speed Boost!)
+      # 2️⃣ Cache Library (HUGE speed boost)
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ matrix.targetPlatform }}-${{ github.ref }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
             Library-
 
-      # 3. Free up disk space 
+      # 3️⃣ Free Disk Space (Unity needs it)
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -51,7 +52,7 @@ jobs:
           swap-storage: true
           docker-images: false
 
-      # 4. Build the Game
+      # 4️⃣ Build Unity
       - name: Build Unity Game
         uses: game-ci/unity-builder@v4
         env:
@@ -62,12 +63,35 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: TunnelVision
 
-      # 5. Upload to Itch.io
-      - name: Push to itch.io
-        uses: manleydev/butler-publish-itchio-action@master 
+      # 5️⃣ Compress Build (important for itch)
+      - name: Zip Build
+        run: |
+          cd build/${{ matrix.targetPlatform }}
+          zip -r ../${{ matrix.targetPlatform }}.zip .
+
+      # 6️⃣ Save Artifact (backup if itch fails)
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}.zip
+
+      # 7️⃣ Push to itch (LATEST channel)
+      - name: Push to itch.io (latest)
+        uses: manleydev/butler-publish-itchio-action@master
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
           CHANNEL: ${{ matrix.itchChannel }}
-          ITCH_GAME: tunnel-vision
+          ITCH_GAME: tunnelvision
           ITCH_USER: studio-71
-          PACKAGE: build/${{ matrix.targetPlatform }}
+          PACKAGE: build/${{ matrix.targetPlatform }}.zip
+
+      # 8️⃣ Push versioned build (history preserved)
+      - name: Push to itch.io (versioned)
+        uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: ${{ matrix.itchChannel }}-${{ github.run_number }}
+          ITCH_GAME: tunnelvision
+          ITCH_USER: studio-71
+          PACKAGE: build/${{ matrix.targetPlatform }}.zip
