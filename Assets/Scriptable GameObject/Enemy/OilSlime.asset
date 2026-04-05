@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27b62d9df87f7c649ac55564a57c0a81, type: 3}
+  m_Name: OilSlime
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: OilSlime
+  elementType: 1
+  lootPoolTag: WaterLoot
+  maxHealth: 100
+  moveSpeed: 3.5
+  rotationSpeed: 8
+  detectionRange: 20
+  lostRange: 25
+  attackRange: 8
+  attackDamage: 10
+  attackCooldown: 2
+  sameElementMultiplier: 0.5
+  animIdle: Idle
+  animWalk: Walk
+  animAttack: Attack
+  animHit: Hit
+  animDead: Dead

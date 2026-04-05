@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1bbee2d1a7f82f49bafa7ded6afd4f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  _virtualCamera: {fileID: 256329227664322395}
+  _virtualCamera: {fileID: 8662915610167210240}
   _weaponController: {fileID: 5649777279913844140}
   _defaultFOV: 60
   _zoomFOV: 45
@@ -277,6 +277,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2071915199882627847
 GameObject:
@@ -378,7 +379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7a1c0f89283d5499c81261301b9170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 5000
+  maxHealth: 1000
   OnTakeDmg:
     m_PersistentCalls:
       m_Calls:
@@ -479,11 +480,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51f57a777a3828243b43b478d8104e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimManager
-  aimCamera: {fileID: 0}
+  aimCamera: {fileID: 8662915610167210240}
   highPriority: 20
   lowPriority: 0
   vignetteCanvasGroup: {fileID: 0}
   vignetteSpeed: 10
+  normalFOV: 60
+  fireFOV: 20
+  shrinkSpeed: 75
+  recoverSpeed: 18
 --- !u!1 &3013753702389225545
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,6 +577,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3400715315934327578
 GameObject:
@@ -801,6 +807,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5611263487659249954
 GameObject:
@@ -890,6 +897,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6159828443571245580
 GameObject:
@@ -979,6 +987,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6451963029342762428
 GameObject:
@@ -1121,7 +1130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
   ImpulseDefinition:
     ImpulseChannel: 1
-    ImpulseShape: 2
+    ImpulseShape: 1
     CustomImpulseShape:
       serializedVersion: 2
       m_Curve: []
@@ -1159,7 +1168,7 @@ MonoBehaviour:
     DissipationMode: 2
     DissipationDistance: 100
     PropagationSpeed: 343
-  DefaultVelocity: {x: 1, y: -1, z: 1}
+  DefaultVelocity: {x: 0, y: -0.05, z: 0}
 --- !u!1 &7593438702111752679
 GameObject:
   m_ObjectHideFlags: 0
@@ -1170,6 +1179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6596701336236477338}
   - component: {fileID: 8662915610167210240}
+  - component: {fileID: 2759203245029244334}
   m_Layer: 0
   m_Name: CM_Aim
   m_TagString: Untagged
@@ -1235,6 +1245,30 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
+--- !u!114 &2759203245029244334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7593438702111752679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseListener
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &7806862853137102897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,6 +1357,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &9148235428307933601
 GameObject:
@@ -1412,6 +1447,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &6258663289416758688
 PrefabInstance:
